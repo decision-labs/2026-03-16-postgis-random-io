@@ -44,10 +44,16 @@ Before the spatial runs, I added a forced-plan crossover probe to visualize:
 
 ![Non-spatial cost/runtime crossover](../2026-03-16-random-io-cost/results/random_io_crossover_dark.png)
 
+How to read this graph:
+
+- Top panel: planner-estimated cost for forced index vs forced seq plans.
+- Bottom panel: measured runtime for forced index, forced seq, and planner-chosen path.
+- Dashed vertical lines: estimated cost crossover and measured runtime crossover.
+
 In this run:
 
-- estimated cost crossover was around `~1.55%`
-- measured runtime crossover was around `~4.89%`
+- Estimated cost crossover was around `~1.55%`.
+- Measured runtime crossover was around `~4.89%`.
 
 Implication: tuning decisions based only on default planner costs can be misleading. If cost crossover and runtime crossover do not align, there is a selectivity band where the planner may pick a slower path. In practice, this means `random_page_cost` should be calibrated against measured runtimes on your own workload, not treated as a one-size-fits-all constant.
 
@@ -62,7 +68,14 @@ I swept radius selectivity from very small up to about 25% area-equivalent selec
 
 ![ST_DWithin sweep](results/spatial_random_io_sweep_dark.png)
 
-#### What stands out
+How to read this graph:
+
+- X-axis: query radius in meters (selectivity proxy).
+- Y-axis: execution time in milliseconds.
+- Blue/red lines: `random_page_cost=4` vs `random_page_cost=30`.
+- Marker shape: plan family at that point.
+
+#### Observations
 
 - Both lines often use the same plan family (mostly bitmap / parallel bitmap) at medium-high selectivity.
 - Runtime still diverges at many points even with the same plan family.
@@ -87,7 +100,14 @@ I added a second sweep using square envelopes, which explicitly combines:
 
 ![ST_Intersects sweep](results/spatial_intersects_sweep_dark.png)
 
-#### Why this test matters
+How to read this graph:
+
+- X-axis: envelope half-side in meters (larger box = higher selectivity).
+- Y-axis: execution time in milliseconds.
+- Blue/red lines compare `random_page_cost=4` vs `random_page_cost=30`.
+- Marker shape indicates the selected plan family.
+
+#### Observations
 
 This pattern is common in real GIS queries. It highlights that:
 
@@ -102,6 +122,31 @@ This pattern is common in real GIS queries. It highlights that:
 The map below shows the synthetic extent, sampled points, query center, and selected radii used in the sweep.
 
 ![Spatial query area map](results/spatial_query_map_dark.png)
+
+How to read this map:
+
+- Square boundary: synthetic dataset extent.
+- Point cloud: sampled points from the table.
+- `X` marker: query center at `(0,0)`.
+- Concentric outlines: tested radii used in sweeps.
+- Highlighted points: sampled hits at the largest radius.
+
+### Why the curves differ
+
+In this workload, `ST_DWithin` is executed as a two-stage path: PostGIS first applies an index-friendly bounding-box prefilter (`geom && ST_Expand(...)`) and then runs the exact `ST_DWithin(...)` predicate as a filter/recheck on candidate rows. That means candidate-set size, `Rows Removed by Filter`, and cache behavior can all shift runtime, even when the overall plan family still appears as bitmap. This matches PostGIS docs that `ST_DWithin` includes a bounding-box comparison and uses spatial indexes: [ST_DWithin](https://postgis.net/docs/manual-dev/ST_DWithin.html), [ST_Expand](https://postgis.net/docs/ST_Expand.html).
+
+```22:32:/Users/shoaib/code/scaling-postgresql-katas/2026-03-16-postgis-random-io/results/03_gist_scan.out
+Aggregate  (cost=1012.73..1012.74 rows=1 width=8) (actual rows=1 loops=1)
+  Buffers: shared hit=94 read=13
+  ->  Bitmap Heap Scan on points_1m  (cost=4.90..1012.48 rows=100 width=0) (actual rows=72 loops=1)
+        Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '400'::double precision)
+        Rows Removed by Filter: 19
+        Heap Blocks: exact=91
+        Buffers: shared hit=94 read=13
+        ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..4.88 rows=62 width=0) (actual rows=91 loops=1)
+              Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '400'::double precision))
+              Buffers: shared hit=3 read=13
+```
 
 ---
 

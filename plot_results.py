@@ -89,6 +89,41 @@ def plot(default_points, compare_points, out_path: Path, theme: str):
                 alpha=0.95,
             )
 
+    # Annotate largest runtime gap between rpc=4 and rpc=30.
+    paired = []
+    by_radius = {p["radius"]: p for p in compare_points}
+    for p in default_points:
+        q = by_radius.get(p["radius"])
+        if q is not None:
+            paired.append((p["radius"], p["exec_ms"], q["exec_ms"], p["plan"], q["plan"]))
+    if paired:
+        r, y1, y2, p1, p2 = max(paired, key=lambda t: abs(t[1] - t[2]))
+        y_top = max(y1, y2)
+        ax.annotate(
+            f"largest rpc gap @ r={int(r)}m",
+            xy=(r, y_top),
+            xytext=(10, 12),
+            textcoords="offset points",
+            fontsize=8,
+            bbox={"facecolor": "#222" if theme == "dark" else "white",
+                  "alpha": 0.7, "edgecolor": "none"},
+        )
+
+        # First radius where chosen plan family differs between rpc settings.
+        diff = [(rr, a, b) for rr, _, _, a, b in paired if a != b]
+        if diff:
+            rr, a, b = diff[0]
+            yy = max(by_radius[rr]["exec_ms"], next(x["exec_ms"] for x in default_points if x["radius"] == rr))
+            ax.annotate(
+                f"plan diverges ({a} vs {b})",
+                xy=(rr, yy),
+                xytext=(12, -18),
+                textcoords="offset points",
+                fontsize=8,
+                bbox={"facecolor": "#222" if theme == "dark" else "white",
+                      "alpha": 0.7, "edgecolor": "none"},
+            )
+
     ax.set_title("Spatial ST_DWithin Sweep: Runtime vs Radius")
     ax.set_xlabel("Radius (meters)")
     ax.set_ylabel("Execution Time (ms)")
