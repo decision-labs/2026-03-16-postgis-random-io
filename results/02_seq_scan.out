@@ -8,13 +8,13 @@ SET
 == Sequential scan baseline ==
 RESET
 RESET
-                                            QUERY PLAN                                            
-══════════════════════════════════════════════════════════════════════════════════════════════════
- Seq Scan on points_1m  (cost=0.00..18334.00 rows=1000000 width=40) (actual rows=1000000 loops=1)
-   Buffers: shared hit=8334
+                                             QUERY PLAN                                             
+════════════════════════════════════════════════════════════════════════════════════════════════════
+ Seq Scan on points_1m  (cost=0.00..183332.58 rows=9999858 width=40) (actual rows=10000000 loops=1)
+   Buffers: shared hit=12617 read=70717
  Planning:
-   Buffers: shared hit=108
- Planning Time: 1.596 ms
- Execution Time: 79.484 ms
+   Buffers: shared hit=104 read=3
+ Planning Time: 38.706 ms
+ Execution Time: 408.818 ms
 (6 rows)
 

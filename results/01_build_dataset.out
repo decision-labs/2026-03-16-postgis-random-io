@@ -5,21 +5,21 @@ Unicode border line style is "single".
 Unicode column line style is "single".
 Unicode header line style is "double".
 SET
-== Rebuild spatial test table at 1,000,000 rows ==
+== Rebuild spatial test table at 5000000 rows ==
 DROP TABLE
 CREATE TABLE
-INSERT 0 1000000
+INSERT 0 5000000
 CREATE INDEX
 VACUUM
 == Validate row count and index ==
  rows_in_points_1m 
 ═══════════════════
-           1000000
+           5000000
 (1 row)
 
  heap_size │ indexes_size │ total_size 
 ═══════════╪══════════════╪════════════
- 65 MB     │ 61 MB        │ 126 MB
+ 326 MB    │ 305 MB       │ 630 MB
 (1 row)
 
      indexname      │                                indexdef                                 

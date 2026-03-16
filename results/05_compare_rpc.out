@@ -15,228 +15,234 @@ SET
 RESET
 RESET
 -- r=1262  (~0.05%)
-                                                               QUERY PLAN                                                                
-═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Aggregate  (cost=20854.48..20854.49 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=664
-   ->  Bitmap Heap Scan on points_1m  (cost=125.00..20854.23 rows=100 width=0) (actual rows=523 loops=1)
-         Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '1262'::double precision)
-         Rows Removed by Filter: 134
-         Heap Blocks: exact=632
-         Buffers: shared hit=664
-         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..124.98 rows=609 width=0) (actual rows=657 loops=1)
-               Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '1262'::double precision))
-               Buffers: shared hit=32
+                                                                     QUERY PLAN                                                                      
+═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+ Finalize Aggregate  (cost=59398.32..59398.33 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=1034 read=2018
+   ->  Gather  (cost=59398.20..59398.31 rows=1 width=8) (actual rows=2 loops=1)
+         Workers Planned: 1
+         Workers Launched: 1
+         Buffers: shared hit=1034 read=2018
+         ->  Partial Aggregate  (cost=58398.20..58398.21 rows=1 width=8) (actual rows=1 loops=2)
+               Buffers: shared hit=1034 read=2018
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=314.84..58397.47 rows=294 width=0) (actual rows=1214 loops=2)
+                     Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '1262'::double precision)
+                     Rows Removed by Filter: 342
+                     Heap Blocks: exact=3000
+                     Buffers: shared hit=1034 read=2018
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..314.72 rows=1890 width=0) (actual rows=3111 loops=1)
+                           Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '1262'::double precision))
+                           Buffers: shared read=52
  Planning:
-   Buffers: shared hit=199
- Planning Time: 13.579 ms
- Execution Time: 1.053 ms
-(14 rows)
+   Buffers: shared hit=137 read=61
+ Planning Time: 12.063 ms
+ Execution Time: 12.500 ms
+(20 rows)
 
 -- r=1784  (~0.1%)
                                                                      QUERY PLAN                                                                      
 ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=30944.16..30944.17 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=1230
-   ->  Gather  (cost=30944.05..30944.16 rows=1 width=8) (actual rows=2 loops=1)
-         Workers Planned: 1
-         Workers Launched: 1
-         Buffers: shared hit=1230
-         ->  Partial Aggregate  (cost=29944.05..29944.06 rows=1 width=8) (actual rows=1 loops=2)
-               Buffers: shared hit=1230
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=189.14..29943.90 rows=59 width=0) (actual rows=502 loops=2)
+ Finalize Aggregate  (cost=114363.20..114363.21 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=3831 read=2029
+   ->  Gather  (cost=114362.98..114363.19 rows=2 width=8) (actual rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=3831 read=2029
+         ->  Partial Aggregate  (cost=113362.98..113362.99 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared hit=3831 read=2029
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=724.69..113362.46 rows=208 width=0) (actual rows=1631 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '1784'::double precision)
-                     Rows Removed by Filter: 140
-                     Heap Blocks: exact=1195
-                     Buffers: shared hit=1230
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..189.12 rows=1161 width=0) (actual rows=1284 loops=1)
+                     Rows Removed by Filter: 446
+                     Heap Blocks: exact=5786
+                     Buffers: shared hit=3831 read=2029
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..724.57 rows=4537 width=0) (actual rows=6229 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '1784'::double precision))
-                           Buffers: shared hit=35
- Planning Time: 0.168 ms
- Execution Time: 12.951 ms
+                           Buffers: shared hit=52 read=22
+ Planning Time: 0.235 ms
+ Execution Time: 12.862 ms
 (18 rows)
 
 -- r=2523  (~0.2%)
                                                                      QUERY PLAN                                                                      
 ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=52097.61..52097.62 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=2237
-   ->  Gather  (cost=52097.50..52097.61 rows=1 width=8) (actual rows=2 loops=1)
-         Workers Planned: 1
-         Workers Launched: 1
-         Buffers: shared hit=2237
-         ->  Partial Aggregate  (cost=51097.50..51097.51 rows=1 width=8) (actual rows=1 loops=2)
-               Buffers: shared hit=2237
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=408.77..51097.35 rows=59 width=0) (actual rows=990 loops=2)
+ Finalize Aggregate  (cost=200325.80..200325.81 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=6689 read=4264
+   ->  Gather  (cost=200325.58..200325.79 rows=2 width=8) (actual rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=6689 read=4264
+         ->  Partial Aggregate  (cost=199325.58..199325.59 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared hit=6689 read=4264
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=1574.31..199325.06 rows=208 width=0) (actual rows=3297 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '2523'::double precision)
-                     Rows Removed by Filter: 266
-                     Heap Blocks: exact=2189
-                     Buffers: shared hit=2237
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..408.75 rows=2445 width=0) (actual rows=2514 loops=1)
+                     Rows Removed by Filter: 878
+                     Heap Blocks: exact=7671
+                     Buffers: shared hit=6689 read=4264
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..1574.18 rows=9819 width=0) (actual rows=12524 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '2523'::double precision))
-                           Buffers: shared hit=48
- Planning Time: 0.100 ms
- Execution Time: 14.046 ms
+                           Buffers: shared hit=74 read=40
+ Planning Time: 0.099 ms
+ Execution Time: 18.016 ms
 (18 rows)
 
 -- r=3989  (~0.5%)
                                                                      QUERY PLAN                                                                      
 ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=74476.75..74476.76 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=4524
-   ->  Gather  (cost=74476.54..74476.75 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=351915.78..351915.79 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=7900 read=14484
+   ->  Gather  (cost=351915.56..351915.77 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=4524
-         ->  Partial Aggregate  (cost=73476.54..73476.55 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=4524
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=1038.90..73476.43 rows=42 width=0) (actual rows=1631 loops=3)
+         Buffers: shared hit=7900 read=14484
+         ->  Partial Aggregate  (cost=350915.56..350915.57 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared hit=7900 read=14484
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=4565.02..350915.04 rows=208 width=0) (actual rows=8211 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '3989'::double precision)
-                     Rows Removed by Filter: 473
-                     Heap Blocks: exact=4460
-                     Buffers: shared hit=4524
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..1038.88 rows=6462 width=0) (actual rows=6312 loops=1)
+                     Rows Removed by Filter: 2324
+                     Heap Blocks: exact=10366
+                     Buffers: shared hit=7900 read=14484
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..4564.89 rows=28580 width=0) (actual rows=31603 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '3989'::double precision))
-                           Buffers: shared hit=64
+                           Buffers: shared hit=114 read=90
  Planning Time: 0.090 ms
- Execution Time: 13.483 ms
+ Execution Time: 37.323 ms
 (18 rows)
 
 -- r=5642  (~1%)
                                                                      QUERY PLAN                                                                      
 ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=92678.27..92678.28 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=6664
-   ->  Gather  (cost=92678.06..92678.27 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=444138.67..444138.68 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=780 read=32320
+   ->  Gather  (cost=444138.45..444138.66 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=6664
-         ->  Partial Aggregate  (cost=91678.06..91678.07 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=6664
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=2171.74..91677.95 rows=42 width=0) (actual rows=3338 loops=3)
+         Buffers: shared hit=780 read=32320
+         ->  Partial Aggregate  (cost=443138.45..443138.46 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared hit=780 read=32320
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=9570.42..443137.93 rows=208 width=0) (actual rows=16565 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '5642'::double precision)
-                     Rows Removed by Filter: 889
-                     Heap Blocks: exact=6563
-                     Buffers: shared hit=6664
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..2171.72 rows=13508 width=0) (actual rows=12679 loops=1)
+                     Rows Removed by Filter: 4573
+                     Heap Blocks: exact=12356
+                     Buffers: shared hit=780 read=32320
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..9570.29 rows=59967 width=0) (actual rows=63414 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '5642'::double precision))
-                           Buffers: shared hit=101
- Planning Time: 0.246 ms
- Execution Time: 24.522 ms
+                           Buffers: shared hit=74 read=319
+ Planning Time: 0.109 ms
+ Execution Time: 69.648 ms
 (18 rows)
 
 -- r=7979  (~2%)
                                                                      QUERY PLAN                                                                      
 ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=150386.30..150386.31 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=8131
-   ->  Gather  (cost=150386.08..150386.29 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=712991.76..712991.77 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=40512
+   ->  Gather  (cost=712991.54..712991.75 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=8131
-         ->  Partial Aggregate  (cost=149386.08..149386.09 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=8131
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=4187.36..149385.98 rows=42 width=0) (actual rows=6644 loops=3)
+         Buffers: shared read=40512
+         ->  Partial Aggregate  (cost=711991.54..711991.55 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=40512
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=19866.58..711991.02 rows=208 width=0) (actual rows=33310 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '7979'::double precision)
-                     Rows Removed by Filter: 1878
-                     Heap Blocks: exact=7373
-                     Buffers: shared hit=8131
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..4187.34 rows=26257 width=0) (actual rows=25567 loops=1)
+                     Rows Removed by Filter: 9022
+                     Heap Blocks: exact=14113
+                     Buffers: shared read=40512
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..19866.45 rows=124788 width=0) (actual rows=126996 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '7979'::double precision))
-                           Buffers: shared hit=159
- Planning Time: 0.108 ms
- Execution Time: 15.669 ms
+                           Buffers: shared read=699
+ Planning Time: 0.110 ms
+ Execution Time: 161.277 ms
 (18 rows)
 
 -- r=12616 (~5%)
                                                                       QUERY PLAN                                                                      
 ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=355011.32..355011.33 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=8724
-   ->  Gather  (cost=355011.10..355011.31 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=1734993.30..1734993.31 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=43396
+   ->  Gather  (cost=1734993.08..1734993.29 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=8724
-         ->  Partial Aggregate  (cost=354011.10..354011.11 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=8724
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=10263.05..354010.99 rows=42 width=0) (actual rows=16650 loops=3)
+         Buffers: shared read=43396
+         ->  Partial Aggregate  (cost=1733993.08..1733993.09 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=43396
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=50153.50..1733992.56 rows=208 width=0) (actual rows=83060 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '12616'::double precision)
-                     Rows Removed by Filter: 4590
-                     Heap Blocks: exact=6627
-                     Buffers: shared hit=8724
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..10263.02 rows=64348 width=0) (actual rows=63718 loops=1)
+                     Rows Removed by Filter: 22836
+                     Heap Blocks: exact=14406
+                     Buffers: shared read=43396
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..50153.38 rows=315045 width=0) (actual rows=317688 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '12616'::double precision))
-                           Buffers: shared hit=395
- Planning Time: 0.105 ms
- Execution Time: 221.435 ms
+                           Buffers: shared read=1745
+ Planning Time: 0.210 ms
+ Execution Time: 118.152 ms
 (18 rows)
 
 -- r=17841 (~10%)
                                                                       QUERY PLAN                                                                      
 ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=693561.38..693561.39 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=9055
-   ->  Gather  (cost=693561.16..693561.37 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=3473629.38..3473629.39 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=45065
+   ->  Gather  (cost=3473629.17..3473629.38 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=9055
-         ->  Partial Aggregate  (cost=692561.16..692561.17 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=9055
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=20305.72..692561.06 rows=42 width=0) (actual rows=33251 loops=3)
+         Buffers: shared read=45065
+         ->  Partial Aggregate  (cost=3472629.17..3472629.17 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=45065
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=101690.98..3472628.65 rows=208 width=0) (actual rows=166555 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '17841'::double precision)
-                     Rows Removed by Filter: 9084
-                     Heap Blocks: exact=5142
-                     Buffers: shared hit=9055
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..20305.69 rows=127371 width=0) (actual rows=127003 loops=1)
+                     Rows Removed by Filter: 45686
+                     Heap Blocks: exact=14167
+                     Buffers: shared read=45065
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..101690.86 rows=638709 width=0) (actual rows=636723 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '17841'::double precision))
-                           Buffers: shared hit=721
- Planning Time: 6.436 ms
- Execution Time: 177.360 ms
+                           Buffers: shared read=3398
+ Planning Time: 0.101 ms
+ Execution Time: 142.785 ms
 (18 rows)
 
 -- r=25231 (~20%)
                                                                       QUERY PLAN                                                                      
 ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=1388231.77..1388231.78 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=9730
-   ->  Gather  (cost=1388231.56..1388231.77 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=6832441.86..6832441.87 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=48332
+   ->  Gather  (cost=6832441.64..6832441.85 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=9730
-         ->  Partial Aggregate  (cost=1387231.56..1387231.57 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=9730
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=40895.62..1387231.46 rows=42 width=0) (actual rows=66625 loops=3)
+         Buffers: shared read=48332
+         ->  Partial Aggregate  (cost=6831441.64..6831441.65 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=48332
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=201210.61..6831441.12 rows=208 width=0) (actual rows=333352 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '25231'::double precision)
-                     Rows Removed by Filter: 18149
-                     Heap Blocks: exact=3001
-                     Buffers: shared hit=9730
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..40895.59 rows=256691 width=0) (actual rows=254322 loops=1)
+                     Rows Removed by Filter: 90633
+                     Heap Blocks: exact=14209
+                     Buffers: shared read=48332
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..201210.49 rows=1263993 width=0) (actual rows=1271955 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '25231'::double precision))
-                           Buffers: shared hit=1396
- Planning Time: 0.667 ms
- Execution Time: 107.478 ms
+                           Buffers: shared read=6665
+ Planning Time: 0.109 ms
+ Execution Time: 216.930 ms
 (18 rows)
 
 -- r=28209 (~25%)
                                                                       QUERY PLAN                                                                      
 ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=1727789.29..1727789.30 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=10029
-   ->  Gather  (cost=1727789.08..1727789.29 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=8537393.76..8537393.77 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=49959
+   ->  Gather  (cost=8537393.54..8537393.75 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=10029
-         ->  Partial Aggregate  (cost=1726789.08..1726789.09 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=10029
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=50939.74..1726788.98 rows=42 width=0) (actual rows=83188 loops=3)
+         Buffers: shared read=49959
+         ->  Partial Aggregate  (cost=8536393.54..8536393.55 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=49959
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=251741.08..8536393.03 rows=208 width=0) (actual rows=416387 loops=3)
                      Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '28209'::double precision)
-                     Rows Removed by Filter: 22796
-                     Heap Blocks: exact=2962
-                     Buffers: shared hit=10029
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..50939.71 rows=319907 width=0) (actual rows=317951 loops=1)
+                     Rows Removed by Filter: 113579
+                     Heap Blocks: exact=14154
+                     Buffers: shared read=49959
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..251740.95 rows=1581388 width=0) (actual rows=1589898 loops=1)
                            Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '28209'::double precision))
-                           Buffers: shared hit=1695
- Planning Time: 0.136 ms
- Execution Time: 52.092 ms
+                           Buffers: shared read=8292
+ Planning Time: 0.114 ms
+ Execution Time: 258.091 ms
 (18 rows)
 

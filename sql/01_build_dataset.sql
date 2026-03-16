@@ -1,4 +1,5 @@
-\echo '== Rebuild spatial test table at 1,000,000 rows =='
+\set rows :rows
+\echo '== Rebuild spatial test table at' :rows 'rows =='
 DROP TABLE IF EXISTS points_1m;
 
 CREATE TABLE points_1m (
@@ -8,7 +9,7 @@ CREATE TABLE points_1m (
 
 INSERT INTO points_1m (geom)
 SELECT ST_SetSRID(ST_MakePoint((random() - 0.5) * 100000, (random() - 0.5) * 100000), 3857)
-FROM generate_series(1, 1000000);
+FROM generate_series(1, :rows::int);
 
 CREATE INDEX points_1m_geom_gix ON points_1m USING gist (geom);
 VACUUM ANALYZE points_1m;

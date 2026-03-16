@@ -17,188 +17,194 @@ RESET
 -- h=1118  (~0.05%)
                                                                                                                                                                                                                                  QUERY PLAN                                                                                                                                                                                                                                  
 ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Aggregate  (cost=72.81..72.82 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=564
-   ->  Index Scan using points_1m_geom_gix on points_1m  (cost=0.29..72.81 rows=1 width=0) (actual rows=510 loops=1)
+ Aggregate  (cost=72.94..72.95 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=963 read=1549
+   ->  Index Scan using points_1m_geom_gix on points_1m  (cost=0.41..72.94 rows=1 width=0) (actual rows=2441 loops=1)
          Index Cond: ((geom && '0103000020110F0000010000000500000000000000007891C000000000007891C000000000007891C0000000000078914000000000007891400000000000789140000000000078914000000000007891C000000000007891C000000000007891C0'::geometry) AND (geom && '0103000020110F0000010000000500000000000000007891C000000000007891C000000000007891C0000000000078914000000000007891400000000000789140000000000078914000000000007891C000000000007891C000000000007891C0'::geometry))
          Filter: st_intersects(geom, '0103000020110F0000010000000500000000000000007891C000000000007891C000000000007891C0000000000078914000000000007891400000000000789140000000000078914000000000007891C000000000007891C000000000007891C0'::geometry)
-         Buffers: shared hit=564
+         Buffers: shared hit=963 read=1549
  Planning:
-   Buffers: shared hit=190
- Planning Time: 10.000 ms
- Execution Time: 0.784 ms
+   Buffers: shared hit=134 read=55
+ Planning Time: 10.070 ms
+ Execution Time: 6.654 ms
 (10 rows)
 
 -- h=1581  (~0.1%)
                                                                                                                                                                                                                                  QUERY PLAN                                                                                                                                                                                                                                  
 ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Aggregate  (cost=72.81..72.82 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=1036
-   ->  Index Scan using points_1m_geom_gix on points_1m  (cost=0.29..72.81 rows=1 width=0) (actual rows=1004 loops=1)
+ Aggregate  (cost=115.46..115.47 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=3422 read=1492
+   ->  Index Scan using points_1m_geom_gix on points_1m  (cost=0.41..115.45 rows=2 width=0) (actual rows=4851 loops=1)
          Index Cond: ((geom && '0103000020110F000001000000050000000000000000B498C00000000000B498C00000000000B498C00000000000B498400000000000B498400000000000B498400000000000B498400000000000B498C00000000000B498C00000000000B498C0'::geometry) AND (geom && '0103000020110F000001000000050000000000000000B498C00000000000B498C00000000000B498C00000000000B498400000000000B498400000000000B498400000000000B498400000000000B498C00000000000B498C00000000000B498C0'::geometry))
          Filter: st_intersects(geom, '0103000020110F000001000000050000000000000000B498C00000000000B498C00000000000B498C00000000000B498400000000000B498400000000000B498400000000000B498400000000000B498C00000000000B498C00000000000B498C0'::geometry)
-         Buffers: shared hit=1036
- Planning Time: 0.172 ms
- Execution Time: 0.906 ms
+         Buffers: shared hit=3422 read=1492
+ Planning Time: 0.148 ms
+ Execution Time: 7.178 ms
 (8 rows)
 
 -- h=2236  (~0.2%)
                                                                                                                                                                                                                                     QUERY PLAN                                                                                                                                                                                                                                     
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Aggregate  (cost=197.84..197.85 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=1818
-   ->  Bitmap Heap Scan on points_1m  (cost=30.33..197.83 rows=4 width=0) (actual rows=1973 loops=1)
+ Aggregate  (cost=493.01..493.02 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=5573 read=3299
+   ->  Bitmap Heap Scan on points_1m  (cost=30.53..492.98 rows=11 width=0) (actual rows=9822 loops=1)
          Recheck Cond: (geom && '0103000020110F00000100000005000000000000000078A1C0000000000078A1C0000000000078A1C0000000000078A140000000000078A140000000000078A140000000000078A140000000000078A1C0000000000078A1C0000000000078A1C0'::geometry)
          Filter: st_intersects(geom, '0103000020110F00000100000005000000000000000078A1C0000000000078A1C0000000000078A1C0000000000078A140000000000078A140000000000078A140000000000078A140000000000078A1C0000000000078A1C0000000000078A1C0'::geometry)
-         Heap Blocks: exact=1771
-         Buffers: shared hit=1818
-         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..30.32 rows=4 width=0) (actual rows=1973 loops=1)
+         Heap Blocks: exact=8768
+         Buffers: shared hit=5573 read=3299
+         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..30.52 rows=11 width=0) (actual rows=9822 loops=1)
                Index Cond: ((geom && '0103000020110F00000100000005000000000000000078A1C0000000000078A1C0000000000078A1C0000000000078A140000000000078A140000000000078A140000000000078A140000000000078A1C0000000000078A1C0000000000078A1C0'::geometry) AND (geom && '0103000020110F00000100000005000000000000000078A1C0000000000078A1C0000000000078A1C0000000000078A140000000000078A140000000000078A140000000000078A140000000000078A1C0000000000078A1C0000000000078A1C0'::geometry))
-               Buffers: shared hit=47
- Planning Time: 0.130 ms
- Execution Time: 1.964 ms
+               Buffers: shared hit=63 read=41
+ Planning Time: 0.196 ms
+ Execution Time: 16.246 ms
 (12 rows)
 
 -- h=3536  (~0.5%)
                                                                                                                                                                                                                                     QUERY PLAN                                                                                                                                                                                                                                     
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Aggregate  (cost=1013.54..1013.55 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=3801
-   ->  Bitmap Heap Scan on points_1m  (cost=30.53..1013.48 rows=24 width=0) (actual rows=4925 loops=1)
+ Aggregate  (cost=3898.31..3898.32 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=7942 read=10875
+   ->  Bitmap Heap Scan on points_1m  (cost=31.38..3898.08 rows=94 width=0) (actual rows=24629 loops=1)
          Recheck Cond: (geom && '0103000020110F000001000000050000000000000000A0ABC00000000000A0ABC00000000000A0ABC00000000000A0AB400000000000A0AB400000000000A0AB400000000000A0AB400000000000A0ABC00000000000A0ABC00000000000A0ABC0'::geometry)
          Filter: st_intersects(geom, '0103000020110F000001000000050000000000000000A0ABC00000000000A0ABC00000000000A0ABC00000000000A0AB400000000000A0AB400000000000A0AB400000000000A0AB400000000000A0ABC00000000000A0ABC00000000000A0ABC0'::geometry)
-         Heap Blocks: exact=3741
-         Buffers: shared hit=3801
-         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..30.52 rows=24 width=0) (actual rows=4925 loops=1)
+         Heap Blocks: exact=18641
+         Buffers: shared hit=7942 read=10875
+         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..31.36 rows=94 width=0) (actual rows=24629 loops=1)
                Index Cond: ((geom && '0103000020110F000001000000050000000000000000A0ABC00000000000A0ABC00000000000A0ABC00000000000A0AB400000000000A0AB400000000000A0AB400000000000A0AB400000000000A0ABC00000000000A0ABC00000000000A0ABC0'::geometry) AND (geom && '0103000020110F000001000000050000000000000000A0ABC00000000000A0ABC00000000000A0ABC00000000000A0AB400000000000A0AB400000000000A0AB400000000000A0AB400000000000A0ABC00000000000A0ABC00000000000A0ABC0'::geometry))
-               Buffers: shared hit=60
- Planning Time: 0.230 ms
- Execution Time: 6.426 ms
+               Buffers: shared hit=104 read=72
+ Planning Time: 0.155 ms
+ Execution Time: 37.413 ms
 (12 rows)
 
 -- h=5000  (~1%)
                                                                                                                                                                                                                                     QUERY PLAN                                                                                                                                                                                                                                     
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Aggregate  (cost=4228.89..4228.90 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=5979
-   ->  Bitmap Heap Scan on points_1m  (cost=31.38..4228.62 rows=107 width=0) (actual rows=9968 loops=1)
+ Aggregate  (cost=16867.66..16867.67 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=2061 read=27348
+   ->  Bitmap Heap Scan on points_1m  (cost=94.77..16866.60 rows=425 width=0) (actual rows=49711 loops=1)
          Recheck Cond: (geom && '0103000020110F00000100000005000000000000000088B3C0000000000088B3C0000000000088B3C0000000000088B340000000000088B340000000000088B340000000000088B340000000000088B3C0000000000088B3C0000000000088B3C0'::geometry)
          Filter: st_intersects(geom, '0103000020110F00000100000005000000000000000088B3C0000000000088B3C0000000000088B3C0000000000088B340000000000088B340000000000088B340000000000088B340000000000088B3C0000000000088B3C0000000000088B3C0'::geometry)
-         Heap Blocks: exact=5889
-         Buffers: shared hit=5979
-         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..31.36 rows=107 width=0) (actual rows=9968 loops=1)
+         Heap Blocks: exact=29089
+         Buffers: shared hit=2061 read=27348
+         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..94.67 rows=425 width=0) (actual rows=49711 loops=1)
                Index Cond: ((geom && '0103000020110F00000100000005000000000000000088B3C0000000000088B3C0000000000088B3C0000000000088B340000000000088B340000000000088B340000000000088B340000000000088B3C0000000000088B3C0000000000088B3C0'::geometry) AND (geom && '0103000020110F00000100000005000000000000000088B3C0000000000088B3C0000000000088B3C0000000000088B340000000000088B340000000000088B340000000000088B340000000000088B3C0000000000088B3C0000000000088B3C0'::geometry))
-               Buffers: shared hit=90
- Planning Time: 0.162 ms
- Execution Time: 7.234 ms
+               Buffers: shared hit=63 read=257
+ Planning Time: 0.649 ms
+ Execution Time: 73.096 ms
 (12 rows)
 
 -- h=7071  (~2%)
-                                                                                                                                                                                                                                    QUERY PLAN                                                                                                                                                                                                                                     
-═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Aggregate  (cost=15550.72..15550.73 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=7756
-   ->  Bitmap Heap Scan on points_1m  (cost=94.76..15549.63 rows=437 width=0) (actual rows=20010 loops=1)
-         Recheck Cond: (geom && '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry)
-         Filter: st_intersects(geom, '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry)
-         Heap Blocks: exact=7612
-         Buffers: shared hit=7756
-         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..94.66 rows=437 width=0) (actual rows=20010 loops=1)
-               Index Cond: ((geom && '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry) AND (geom && '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry))
-               Buffers: shared hit=144
- Planning Time: 0.182 ms
- Execution Time: 11.594 ms
-(12 rows)
+                                                                                                                                                                                                                                          QUERY PLAN                                                                                                                                                                                                                                           
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+ Finalize Aggregate  (cost=60380.49..60380.50 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=25 read=38524
+   ->  Gather  (cost=60380.38..60380.49 rows=1 width=8) (actual rows=2 loops=1)
+         Workers Planned: 1
+         Workers Launched: 1
+         Buffers: shared hit=25 read=38524
+         ->  Partial Aggregate  (cost=59380.38..59380.39 rows=1 width=8) (actual rows=1 loops=2)
+               Buffers: shared hit=25 read=38524
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=320.16..59377.55 rows=1133 width=0) (actual rows=49865 loops=2)
+                     Recheck Cond: (geom && '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry)
+                     Filter: st_intersects(geom, '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry)
+                     Heap Blocks: exact=19553
+                     Buffers: shared hit=25 read=38524
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..319.68 rows=1926 width=0) (actual rows=99730 loops=1)
+                           Index Cond: ((geom && '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry) AND (geom && '0103000020110F0000010000000500000000000000009FBBC000000000009FBBC000000000009FBBC000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBB4000000000009FBBC000000000009FBBC000000000009FBBC0'::geometry))
+                           Buffers: shared read=572
+ Planning Time: 0.171 ms
+ Execution Time: 127.004 ms
+(18 rows)
 
 -- h=11180 (~5%)
                                                                                                                                                                                                                                           QUERY PLAN                                                                                                                                                                                                                                           
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=55872.51..55872.52 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=8628
-   ->  Gather  (cost=55872.39..55872.50 rows=1 width=8) (actual rows=2 loops=1)
-         Workers Planned: 1
-         Workers Launched: 1
-         Buffers: shared hit=8628
-         ->  Partial Aggregate  (cost=54872.39..54872.40 rows=1 width=8) (actual rows=1 loops=2)
-               Buffers: shared hit=8628
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=448.30..54868.37 rows=1608 width=0) (actual rows=25094 loops=2)
+ Finalize Aggregate  (cost=228935.89..228935.90 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=42939
+   ->  Gather  (cost=228935.67..228935.88 rows=2 width=8) (actual rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared read=42939
+         ->  Partial Aggregate  (cost=227935.67..227935.68 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=42939
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=1984.59..227923.05 rows=5048 width=0) (actual rows=83028 loops=3)
                      Recheck Cond: (geom && '0103000020110F000001000000050000000000000000D6C5C00000000000D6C5C00000000000D6C5C00000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5C00000000000D6C5C00000000000D6C5C0'::geometry)
                      Filter: st_intersects(geom, '0103000020110F000001000000050000000000000000D6C5C00000000000D6C5C00000000000D6C5C00000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5C00000000000D6C5C00000000000D6C5C0'::geometry)
-                     Heap Blocks: exact=6184
-                     Buffers: shared hit=8628
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..447.62 rows=2733 width=0) (actual rows=50187 loops=1)
+                     Heap Blocks: exact=14356
+                     Buffers: shared read=42939
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..1981.57 rows=12115 width=0) (actual rows=249083 loops=1)
                            Index Cond: ((geom && '0103000020110F000001000000050000000000000000D6C5C00000000000D6C5C00000000000D6C5C00000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5C00000000000D6C5C00000000000D6C5C0'::geometry) AND (geom && '0103000020110F000001000000050000000000000000D6C5C00000000000D6C5C00000000000D6C5C00000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5400000000000D6C5C00000000000D6C5C00000000000D6C5C0'::geometry))
-                           Buffers: shared hit=312
- Planning Time: 0.200 ms
- Execution Time: 20.297 ms
+                           Buffers: shared read=1364
+ Planning Time: 0.189 ms
+ Execution Time: 120.606 ms
 (18 rows)
 
 -- h=15811 (~10%)
                                                                                                                                                                                                                                           QUERY PLAN                                                                                                                                                                                                                                           
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=85347.84..85347.85 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=8896
-   ->  Gather  (cost=85347.62..85347.83 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=421618.55..421618.56 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=44323
+   ->  Gather  (cost=421618.33..421618.54 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=8896
-         ->  Partial Aggregate  (cost=84347.62..84347.63 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=8896
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=1632.95..84337.19 rows=4173 width=0) (actual rows=33290 loops=3)
+         Buffers: shared read=44323
+         ->  Partial Aggregate  (cost=420618.33..420618.34 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=44323
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=8039.16..420566.63 rows=20681 width=0) (actual rows=166482 loops=3)
                      Recheck Cond: (geom && '0103000020110F000001000000050000000000000080E1CEC00000000080E1CEC00000000080E1CEC00000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CEC00000000080E1CEC00000000080E1CEC0'::geometry)
                      Filter: st_intersects(geom, '0103000020110F000001000000050000000000000080E1CEC00000000080E1CEC00000000080E1CEC00000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CEC00000000080E1CEC00000000080E1CEC0'::geometry)
-                     Heap Blocks: exact=3701
-                     Buffers: shared hit=8896
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..1630.45 rows=10016 width=0) (actual rows=99870 loops=1)
+                     Heap Blocks: exact=14306
+                     Buffers: shared read=44323
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..8026.76 rows=49634 width=0) (actual rows=499445 loops=1)
                            Index Cond: ((geom && '0103000020110F000001000000050000000000000080E1CEC00000000080E1CEC00000000080E1CEC00000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CEC00000000080E1CEC00000000080E1CEC0'::geometry) AND (geom && '0103000020110F000001000000050000000000000080E1CEC00000000080E1CEC00000000080E1CEC00000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CE400000000080E1CEC00000000080E1CEC00000000080E1CEC0'::geometry))
-                           Buffers: shared hit=562
- Planning Time: 0.180 ms
- Execution Time: 26.412 ms
+                           Buffers: shared read=2656
+ Planning Time: 0.198 ms
+ Execution Time: 150.287 ms
 (18 rows)
 
 -- h=22361 (~20%)
                                                                                                                                                                                                                                           QUERY PLAN                                                                                                                                                                                                                                           
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=228607.98..228607.99 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=9438
-   ->  Gather  (cost=228607.76..228607.97 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=1108158.98..1108158.99 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=46893
+   ->  Gather  (cost=1108158.76..1108158.97 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=9438
-         ->  Partial Aggregate  (cost=227607.76..227607.77 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=9438
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=6628.27..227565.29 rows=16991 width=0) (actual rows=66550 loops=3)
+         Buffers: shared read=46893
+         ->  Partial Aggregate  (cost=1107158.76..1107158.77 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=46893
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=32091.71..1106952.33 rows=82573 width=0) (actual rows=333515 loops=3)
                      Recheck Cond: (geom && '0103000020110F000001000000050000000000000040D6D5C00000000040D6D5C00000000040D6D5C00000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5C00000000040D6D5C00000000040D6D5C0'::geometry)
                      Filter: st_intersects(geom, '0103000020110F000001000000050000000000000040D6D5C00000000040D6D5C00000000040D6D5C00000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5C00000000040D6D5C00000000040D6D5C0'::geometry)
-                     Heap Blocks: exact=3024
-                     Buffers: shared hit=9438
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..6618.07 rows=40779 width=0) (actual rows=199649 loops=1)
+                     Heap Blocks: exact=14232
+                     Buffers: shared read=46893
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..32042.17 rows=198175 width=0) (actual rows=1000544 loops=1)
                            Index Cond: ((geom && '0103000020110F000001000000050000000000000040D6D5C00000000040D6D5C00000000040D6D5C00000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5C00000000040D6D5C00000000040D6D5C0'::geometry) AND (geom && '0103000020110F000001000000050000000000000040D6D5C00000000040D6D5C00000000040D6D5C00000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5400000000040D6D5C00000000040D6D5C00000000040D6D5C0'::geometry))
-                           Buffers: shared hit=1104
- Planning Time: 0.205 ms
- Execution Time: 39.794 ms
+                           Buffers: shared read=5226
+ Planning Time: 0.201 ms
+ Execution Time: 246.433 ms
 (18 rows)
 
 -- h=25000 (~25%)
                                                                                                                                                                                                                                           QUERY PLAN                                                                                                                                                                                                                                           
 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
- Finalize Aggregate  (cost=350828.89..350828.90 rows=1 width=8) (actual rows=1 loops=1)
-   Buffers: shared hit=9728
-   ->  Gather  (cost=350828.68..350828.89 rows=2 width=8) (actual rows=3 loops=1)
+ Finalize Aggregate  (cost=1697597.00..1697597.01 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared read=48186
+   ->  Gather  (cost=1697596.79..1697597.00 rows=2 width=8) (actual rows=3 loops=1)
          Workers Planned: 2
          Workers Launched: 2
-         Buffers: shared hit=9728
-         ->  Partial Aggregate  (cost=349828.68..349828.69 rows=1 width=8) (actual rows=1 loops=3)
-               Buffers: shared hit=9728
-               ->  Parallel Bitmap Heap Scan on points_1m  (cost=10311.27..349762.52 rows=26463 width=0) (actual rows=83248 loops=3)
+         Buffers: shared read=48186
+         ->  Partial Aggregate  (cost=1696596.79..1696596.80 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared read=48186
+               ->  Parallel Bitmap Heap Scan on points_1m  (cost=49865.40..1696276.16 rows=128251 width=0) (actual rows=416282 loops=3)
                      Recheck Cond: (geom && '0103000020110F0000010000000500000000000000006AD8C000000000006AD8C000000000006AD8C000000000006AD84000000000006AD84000000000006AD84000000000006AD84000000000006AD8C000000000006AD8C000000000006AD8C0'::geometry)
                      Filter: st_intersects(geom, '0103000020110F0000010000000500000000000000006AD8C000000000006AD8C000000000006AD8C000000000006AD84000000000006AD84000000000006AD84000000000006AD84000000000006AD8C000000000006AD8C000000000006AD8C0'::geometry)
-                     Heap Blocks: exact=3002
-                     Buffers: shared hit=9728
-                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..10295.40 rows=63511 width=0) (actual rows=249744 loops=1)
+                     Heap Blocks: exact=14263
+                     Buffers: shared read=48186
+                     ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..49788.44 rows=307803 width=0) (actual rows=1248846 loops=1)
                            Index Cond: ((geom && '0103000020110F0000010000000500000000000000006AD8C000000000006AD8C000000000006AD8C000000000006AD84000000000006AD84000000000006AD84000000000006AD84000000000006AD8C000000000006AD8C000000000006AD8C0'::geometry) AND (geom && '0103000020110F0000010000000500000000000000006AD8C000000000006AD8C000000000006AD8C000000000006AD84000000000006AD84000000000006AD84000000000006AD84000000000006AD8C000000000006AD8C000000000006AD8C0'::geometry))
-                           Buffers: shared hit=1394
- Planning Time: 0.211 ms
- Execution Time: 47.024 ms
+                           Buffers: shared read=6519
+ Planning Time: 0.218 ms
+ Execution Time: 251.510 ms
 (18 rows)
 

@@ -20,7 +20,7 @@ Environment:
 
 - PostgreSQL 17 (local)
 - PostGIS 3.6.1
-- 1,000,000 random points in `EPSG:3857`
+- 5,000,000 random points in `EPSG:3857`
 - GiST index on `geom`
 
 Dataset extent is synthetic and centered around `(0,0)`, approximately `[-50000, 50000]` meters on each axis.
@@ -34,9 +34,9 @@ Machine specs:
 
 ---
 
-### Baseline non-spatial crossover check
+### Non-spatial crossover check
 
-Before the spatial runs, I added a forced-plan crossover probe to visualize:
+I included a forced-plan crossover probe to visualize:
 
 - planner-estimated cost curves (forced index vs forced seq)
 - actual runtime curves (forced index vs forced seq)
@@ -77,17 +77,24 @@ How to read this graph:
 
 #### Observations
 
-- Both lines often use the same plan family (mostly bitmap / parallel bitmap) at medium-high selectivity.
-- Runtime still diverges at many points even with the same plan family.
+The key feature to notice first is the plan flip near the low-selectivity end: marker shape changes from bitmap-style access to index-style access, and runtime climbs sharply right after that transition. As radius grows further, the plan flips again toward parallel bitmap behavior and runtime drops. That "flip then drop" pattern is the main signal in this graph: plan family transitions are driving the big steps in latency, not a smooth linear slowdown.
 
-That happens because "same node type" is not "same actual work":
+#### `ST_DWithin` crossover (cost vs runtime)
 
-- different heap page hit/read mix
-- different prefetch/caching behavior between runs
-- different filter/recheck cost effects
-- parallel worker timing and contention
+![ST_DWithin crossover](results/spatial_dwithin_crossover_dark.png)
 
-So this chart is a good reminder: plan label alone is not enough; you need `BUFFERS`, execution time, and repeated runs.
+How to read this graph:
+
+- Top panel: forced-path planner cost (index vs seq).
+- Bottom panel: forced-path runtime (index vs seq) and planner-chosen runtime.
+- Dashed lines: estimated cost crossover vs measured runtime crossover.
+
+In this run:
+
+- Estimated cost crossover is around `~32.8%`.
+- Measured runtime crossover is around `~2.31%`.
+
+The key point is the gap between those two crossover locations. There is a broad band where the planner still prices index-like access as cheaper, but measured runtime already favors the sequential path.
 
 ---
 
@@ -115,25 +122,57 @@ This pattern is common in real GIS queries. It highlights that:
 - exact predicate checks add CPU work beyond raw I/O
 - planner constants can shift choices, but runtime shape still depends heavily on data locality and cache state
 
+#### `ST_Intersects` crossover (cost vs runtime)
+
+![ST_Intersects crossover](results/spatial_intersects_crossover_dark.png)
+
+How to read this graph:
+
+- Top panel: forced-path planner cost (index vs seq).
+- Bottom panel: forced-path runtime (index vs seq) and planner-chosen runtime.
+- Dashed lines: estimated cost crossover vs measured runtime crossover.
+
+In this run:
+
+- Estimated cost crossover is around `~64.77%`.
+- Measured runtime crossover is around `~2.43%`.
+
+This is an even wider mismatch than `ST_DWithin` in this dataset: runtime prefers seq much earlier than the planner cost model suggests.
+
 ---
 
 ### Query area map
 
-The map below shows the synthetic extent, sampled points, query center, and selected radii used in the sweep.
+The first map shows the synthetic extent, sampled points, query center, and radii used for `ST_DWithin`.
 
 ![Spatial query area map](results/spatial_query_map_dark.png)
+
+The second map shows the same extent with envelope half-sides used for `ST_Intersects`.
+
+![Spatial intersects area map](results/spatial_intersects_map_dark.png)
 
 How to read this map:
 
 - Square boundary: synthetic dataset extent.
 - Point cloud: sampled points from the table.
 - `X` marker: query center at `(0,0)`.
-- Concentric outlines: tested radii used in sweeps.
-- Highlighted points: sampled hits at the largest radius.
+- Concentric outlines or nested envelopes: tested query sizes used in sweeps.
+- Highlighted points: sampled hits at the largest query size.
 
-### Why the curves differ
+### Why `ST_DWithin` and `ST_Intersects` curves differ
 
-In this workload, `ST_DWithin` is executed as a two-stage path: PostGIS first applies an index-friendly bounding-box prefilter (`geom && ST_Expand(...)`) and then runs the exact `ST_DWithin(...)` predicate as a filter/recheck on candidate rows. That means candidate-set size, `Rows Removed by Filter`, and cache behavior can all shift runtime, even when the overall plan family still appears as bitmap. This matches PostGIS docs that `ST_DWithin` includes a bounding-box comparison and uses spatial indexes: [ST_DWithin](https://postgis.net/docs/manual-dev/ST_DWithin.html), [ST_Expand](https://postgis.net/docs/ST_Expand.html).
+Both query families use `&&` prefiltering, but they do not pay the same recheck cost.
+
+For `ST_DWithin`, PostGIS uses `geom && ST_Expand(point, r)` first (a square), then exact `ST_DWithin(...)` on the surviving candidates (a circle). For uniformly distributed points, that square-vs-circle mismatch introduces a near-constant false-positive tax:
+
+- circle / square area ratio = `pi/4` (~78.5%)
+- expected false-positive share = `1 - pi/4` (~21.5%)
+
+That is exactly what we observe at high selectivity in this run: the plan keeps a large bitmap path but still reports substantial `Rows Removed by Filter`, consistent with the geometric mismatch.
+
+For `ST_Intersects` with an envelope, we also use `&&`, but the exact predicate is rectangle-based and aligns much more closely with the prefilter shape, so the middle-of-curve offset behavior is smaller and more stable.
+
+This matches PostGIS docs that `ST_DWithin` includes a bounding-box comparison and uses spatial indexes: [ST_DWithin](https://postgis.net/docs/manual-dev/ST_DWithin.html), [ST_Expand](https://postgis.net/docs/ST_Expand.html).
 
 ```22:32:/Users/shoaib/code/scaling-postgresql-katas/2026-03-16-postgis-random-io/results/03_gist_scan.out
 Aggregate  (cost=1012.73..1012.74 rows=1 width=8) (actual rows=1 loops=1)
@@ -156,8 +195,9 @@ Aggregate  (cost=1012.73..1012.74 rows=1 width=8) (actual rows=1 loops=1)
 2. For PostGIS, evaluate both:
    - path family changes (index/bitmap/seq/parallel variants)
    - runtime changes within the same family.
-3. Always pair `EXPLAIN (ANALYZE, BUFFERS)` with repeated measurements.
+3. Always pair `EXPLAIN (ANALYZE, BUFFERS)` with careful runtime measurement.
 4. If you want to claim crossover behavior, plot both cost and runtime curves explicitly.
+5. In this run, both spatial query families show runtime crossover near `~2.4%`, while cost crossover is much later (`~32.8%` and `~64.8%`).
 
 ---
 
@@ -166,7 +206,7 @@ Aggregate  (cost=1012.73..1012.74 rows=1 width=8) (actual rows=1 loops=1)
 From `2026-03-16-postgis-random-io/`:
 
 - `make init`
-- `make build`
+- `make build ROWS=5000000`
 - `make sweep`
 - `make compare RPC=30`
 - `make graph`
@@ -174,6 +214,11 @@ From `2026-03-16-postgis-random-io/`:
 - `make icompare RPC=30`
 - `make igraph`
 - `make map`
+- `make dcrossover`
+- `make dgraph-crossover-dark`
+- `make icrossover`
+- `make igraph-crossover-dark`
+- `make imap-dark`
 
 From `2026-03-16-random-io-cost/`:
 
