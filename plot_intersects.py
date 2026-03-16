@@ -49,13 +49,27 @@ def marker_for_plan(plan: str):
     }.get(plan, "x")
 
 
-def plot(default_points, compare_points, out_path: Path):
+def apply_theme(theme: str):
+    if theme == "dark":
+        plt.style.use("dark_background")
+    else:
+        plt.style.use("default")
+
+
+def plot(default_points, compare_points, out_path: Path, theme: str):
+    apply_theme(theme)
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    for label, points, color in [
-        ("rpc=4", default_points, "#1f77b4"),
-        ("rpc=30", compare_points, "#d62728"),
-    ]:
+    if theme == "dark":
+        series = [("rpc=4", default_points, "#7aa2f7"),
+                  ("rpc=30", compare_points, "#f7768e")]
+        grid_alpha = 0.25
+    else:
+        series = [("rpc=4", default_points, "#1f77b4"),
+                  ("rpc=30", compare_points, "#d62728")]
+        grid_alpha = 0.3
+
+    for label, points, color in series:
         x = [p["half_side"] for p in points]
         y = [p["exec_ms"] for p in points]
         ax.plot(x, y, color=color, linewidth=1.8, alpha=0.9, label=label)
@@ -72,7 +86,7 @@ def plot(default_points, compare_points, out_path: Path):
     ax.set_title("Spatial ST_Intersects Sweep: Runtime vs Envelope Half-Side")
     ax.set_xlabel("Envelope half-side (meters)")
     ax.set_ylabel("Execution Time (ms)")
-    ax.grid(True, linestyle="--", alpha=0.3)
+    ax.grid(True, linestyle="--", alpha=grid_alpha)
     line_legend = ax.legend(loc="upper left", title="Series")
 
     plan_markers = []
@@ -82,7 +96,7 @@ def plot(default_points, compare_points, out_path: Path):
                 [0],
                 [0],
                 marker=marker_for_plan(plan),
-                color="black",
+                color="#e5e5e5" if theme == "dark" else "black",
                 linestyle="None",
                 markersize=7,
                 label=plan,
@@ -102,6 +116,7 @@ def main():
     parser.add_argument("--default-out", required=True)
     parser.add_argument("--compare-out", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--theme", choices=["light", "dark"], default="light")
     args = parser.parse_args()
 
     default_points = parse_results(Path(args.default_out))
@@ -112,7 +127,7 @@ def main():
     if not compare_points:
         raise SystemExit(f"No points parsed from {args.compare_out}")
 
-    plot(default_points, compare_points, Path(args.output))
+    plot(default_points, compare_points, Path(args.output), args.theme)
 
 
 if __name__ == "__main__":

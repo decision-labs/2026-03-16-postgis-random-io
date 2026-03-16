@@ -3,13 +3,16 @@ PSQL ?= psql
 RPC ?= 30
 RESULTS_DIR ?= results
 GRAPH_FILE ?= $(RESULTS_DIR)/spatial_random_io_sweep.png
+GRAPH_DARK_FILE ?= $(RESULTS_DIR)/spatial_random_io_sweep_dark.png
 INTERSECTS_GRAPH_FILE ?= $(RESULTS_DIR)/spatial_intersects_sweep.png
+INTERSECTS_GRAPH_DARK_FILE ?= $(RESULTS_DIR)/spatial_intersects_sweep_dark.png
 MAP_FILE ?= $(RESULTS_DIR)/spatial_query_map.png
+MAP_DARK_FILE ?= $(RESULTS_DIR)/spatial_query_map_dark.png
 MAP_RADII ?= 1262,5642,12616,17841,25231,28209
 MAP_HIT_RADIUS ?= 28209
 MAP_HIT_SAMPLE ?= 0.10
 
-.PHONY: help init build seq gist sweep compare graph isweep icompare igraph map all
+.PHONY: help init build seq gist sweep compare graph graph-dark isweep icompare igraph igraph-dark map map-dark all
 
 help:
 	@echo "Targets:"
@@ -20,10 +23,13 @@ help:
 	@echo "  make sweep   DB=<db_name>        # run ST_DWithin radius sweep at default rpc"
 	@echo "  make compare DB=<db_name> RPC=30 # run ST_DWithin sweep with adjusted rpc"
 	@echo "  make graph                       # plot default vs adjusted sweep"
+	@echo "  make graph-dark                  # plot dark-mode ST_DWithin sweep"
 	@echo "  make isweep  DB=<db_name>        # run ST_Intersects envelope sweep at default rpc"
 	@echo "  make icompare DB=<db_name> RPC=30# run ST_Intersects sweep with adjusted rpc"
 	@echo "  make igraph                      # plot ST_Intersects default vs adjusted sweep"
+	@echo "  make igraph-dark                 # plot dark-mode ST_Intersects sweep"
 	@echo "  make map                         # plot area, sample points, and sweep radii"
+	@echo "  make map-dark                    # plot dark-mode query area map"
 	@echo "  make all     DB=<db_name>        # init build seq gist sweep"
 
 $(RESULTS_DIR):
@@ -59,11 +65,25 @@ graph: | $(RESULTS_DIR)
 		--compare-out "$(RESULTS_DIR)/05_compare_rpc.out" \
 		--output "$(GRAPH_FILE)"
 
+graph-dark: | $(RESULTS_DIR)
+	python3 plot_results.py \
+		--default-out "$(RESULTS_DIR)/04_dwithin_sweep.out" \
+		--compare-out "$(RESULTS_DIR)/05_compare_rpc.out" \
+		--theme dark \
+		--output "$(GRAPH_DARK_FILE)"
+
 igraph: | $(RESULTS_DIR)
 	python3 plot_intersects.py \
 		--default-out "$(RESULTS_DIR)/06_intersects_sweep.out" \
 		--compare-out "$(RESULTS_DIR)/07_intersects_compare_rpc.out" \
 		--output "$(INTERSECTS_GRAPH_FILE)"
+
+igraph-dark: | $(RESULTS_DIR)
+	python3 plot_intersects.py \
+		--default-out "$(RESULTS_DIR)/06_intersects_sweep.out" \
+		--compare-out "$(RESULTS_DIR)/07_intersects_compare_rpc.out" \
+		--theme dark \
+		--output "$(INTERSECTS_GRAPH_DARK_FILE)"
 
 map: | $(RESULTS_DIR)
 	(echo "x,y"; $(PSQL) -X -q -v ON_ERROR_STOP=1 -d "$(DB)" -At -F, -c "SELECT ST_X(geom), ST_Y(geom) FROM points_1m TABLESAMPLE BERNOULLI (0.50);") > "$(RESULTS_DIR)/map_sample_points.csv"
@@ -74,5 +94,16 @@ map: | $(RESULTS_DIR)
 		--radii "$(MAP_RADII)" \
 		--hit-radius "$(MAP_HIT_RADIUS)" \
 		--output "$(MAP_FILE)"
+
+map-dark: | $(RESULTS_DIR)
+	(echo "x,y"; $(PSQL) -X -q -v ON_ERROR_STOP=1 -d "$(DB)" -At -F, -c "SELECT ST_X(geom), ST_Y(geom) FROM points_1m TABLESAMPLE BERNOULLI (0.50);") > "$(RESULTS_DIR)/map_sample_points.csv"
+	(echo "x,y"; $(PSQL) -X -q -v ON_ERROR_STOP=1 -d "$(DB)" -At -F, -c "SELECT ST_X(geom), ST_Y(geom) FROM points_1m WHERE ST_DWithin(geom, ST_SetSRID(ST_MakePoint(0,0),3857), $(MAP_HIT_RADIUS)) AND random() < $(MAP_HIT_SAMPLE);") > "$(RESULTS_DIR)/map_query_hits.csv"
+	python3 plot_map.py \
+		--sample-csv "$(RESULTS_DIR)/map_sample_points.csv" \
+		--hits-csv "$(RESULTS_DIR)/map_query_hits.csv" \
+		--radii "$(MAP_RADII)" \
+		--hit-radius "$(MAP_HIT_RADIUS)" \
+		--theme dark \
+		--output "$(MAP_DARK_FILE)"
 
 all: init build seq gist sweep

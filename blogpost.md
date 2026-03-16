@@ -1,5 +1,8 @@
 ## The Real Cost of Spatial Random I/O (PostGIS Edition)
 
+Short repo-first version: see [README](https://github.com/decision-labs/2026-03-16-postgis-random-io/blob/main/README.md).
+Repository: [decision-labs/2026-03-16-postgis-random-io](https://github.com/decision-labs/2026-03-16-postgis-random-io)
+
 The recent plan-flip outage discussion around Clerk is a good reminder that sudden planner changes can have real production impact when a hot-path query crosses into a worse plan unexpectedly.
 
 One way plan choice can go wrong is when `random_page_cost` is set from the intuition that SSDs make random I/O almost as cheap as sequential I/O. That intuition is common, but in real workloads it can shift plan boundaries in ways that do not match observed runtimes.
@@ -39,7 +42,7 @@ Before the spatial runs, I added a forced-plan crossover probe to visualize:
 - actual runtime curves (forced index vs forced seq)
 - planner-chosen runtime
 
-![Non-spatial cost/runtime crossover](../2026-03-16-random-io-cost/results/random_io_crossover.png)
+![Non-spatial cost/runtime crossover](../2026-03-16-random-io-cost/results/random_io_crossover_dark.png)
 
 In this run:
 
@@ -57,7 +60,7 @@ I swept radius selectivity from very small up to about 25% area-equivalent selec
 - default `random_page_cost=4`
 - adjusted `random_page_cost=30`
 
-![ST_DWithin sweep](results/spatial_random_io_sweep.png)
+![ST_DWithin sweep](results/spatial_random_io_sweep_dark.png)
 
 #### What stands out
 
@@ -82,7 +85,7 @@ I added a second sweep using square envelopes, which explicitly combines:
 - bbox index filtering (`&&`)
 - exact spatial predicate (`ST_Intersects`)
 
-![ST_Intersects sweep](results/spatial_intersects_sweep.png)
+![ST_Intersects sweep](results/spatial_intersects_sweep_dark.png)
 
 #### Why this test matters
 
@@ -98,7 +101,7 @@ This pattern is common in real GIS queries. It highlights that:
 
 The map below shows the synthetic extent, sampled points, query center, and selected radii used in the sweep.
 
-![Spatial query area map](results/spatial_query_map.png)
+![Spatial query area map](results/spatial_query_map_dark.png)
 
 ---
 

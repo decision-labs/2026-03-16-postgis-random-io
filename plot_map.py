@@ -22,6 +22,7 @@ def main():
     parser.add_argument("--radii", required=True)
     parser.add_argument("--hit-radius", type=float, required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--theme", choices=["light", "dark"], default="light")
     args = parser.parse_args()
 
     sample = build_gdf(Path(args.sample_csv))
@@ -42,25 +43,45 @@ def main():
         crs="EPSG:3857",
     )
 
+    if args.theme == "dark":
+        plt.style.use("dark_background")
+        domain_color = "#8a8a8a"
+        sample_color = "#7aa2f7"
+        circle_color = "#ff9e64"
+        hit_color = "#f7768e"
+        center_color = "#f0f0f0"
+        label_bg = "#1e1e1e"
+        grid_alpha = 0.2
+    else:
+        plt.style.use("default")
+        domain_color = "#555555"
+        sample_color = "#4c78a8"
+        circle_color = "#f58518"
+        hit_color = "#b279a2"
+        center_color = "black"
+        label_bg = "white"
+        grid_alpha = 0.25
+
     fig, ax = plt.subplots(figsize=(9, 9))
 
-    domain.boundary.plot(
-        ax=ax, color="#555555", linewidth=1.1, label="dataset extent"
-    )
+    domain.boundary.plot(ax=ax, color=domain_color, linewidth=1.1,
+                         label="dataset extent")
     sample.plot(
-        ax=ax, markersize=2, color="#4c78a8", alpha=0.22, label="sampled points"
+        ax=ax, markersize=2, color=sample_color, alpha=0.22,
+        label="sampled points"
     )
-    circles.boundary.plot(ax=ax, linewidth=1.6, color="#f58518", alpha=0.8)
+    circles.boundary.plot(ax=ax, linewidth=1.6, color=circle_color, alpha=0.8)
     hits.plot(
         ax=ax,
         markersize=7,
-        color="#b279a2",
+        color=hit_color,
         alpha=0.8,
         label=f"sampled hits at r={int(args.hit_radius)}m",
     )
 
     ax.scatter(
-        [0], [0], s=60, marker="x", color="black", label="query center (0,0)"
+        [0], [0], s=60, marker="x", color=center_color,
+        label="query center (0,0)"
     )
 
     angles_deg = [20, 40, 65, 95, 125, 155, 210, 250, 300, 335]
@@ -74,14 +95,14 @@ def main():
             xytext=(4, 4),
             textcoords="offset points",
             fontsize=9,
-            bbox={"facecolor": "white", "alpha": 0.7, "edgecolor": "none"},
+            bbox={"facecolor": label_bg, "alpha": 0.7, "edgecolor": "none"},
         )
 
     ax.set_title("PostGIS Spatial Area and ST_DWithin Query Geometry")
     ax.set_xlabel("X (meters, EPSG:3857)")
     ax.set_ylabel("Y (meters, EPSG:3857)")
     ax.set_aspect("equal", adjustable="box")
-    ax.grid(True, linestyle="--", alpha=0.25)
+    ax.grid(True, linestyle="--", alpha=grid_alpha)
     ax.legend(loc="upper right")
 
     out = Path(args.output)
