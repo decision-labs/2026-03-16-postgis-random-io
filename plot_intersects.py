@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+import argparse
+import re
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+
+BLOCK_RE = re.compile(r"--\s*h=([0-9.]+)[^\n]*\n(.*?)(?=\n--\s*h=|\Z)", re.S)
+EXEC_RE = re.compile(r"Execution Time:\s*([0-9.]+)\s*ms")
+
+
+def parse_results(path: Path):
+    text = path.read_text()
+    points = []
+    for h_s, block in BLOCK_RE.findall(text):
+        if "Parallel Bitmap Heap Scan on points_1m" in block:
+            plan = "Parallel Bitmap Heap Scan"
+        elif "Parallel Seq Scan on points_1m" in block:
+            plan = "Parallel Seq Scan"
+        elif "Seq Scan on points_1m" in block:
+            plan = "Seq Scan"
+        elif "Bitmap Heap Scan on points_1m" in block:
+            plan = "Bitmap Heap Scan"
+        elif "Index Scan using points_1m_geom_gix" in block:
+            plan = "Index Scan"
+        else:
+            plan = "Other"
+
+        m_exec = EXEC_RE.search(block)
+        if not m_exec:
+            continue
+
+        points.append({
+            "half_side": float(h_s),
+            "exec_ms": float(m_exec.group(1)),
+            "plan": plan,
+        })
+    return sorted(points, key=lambda d: d["half_side"])
+
+
+def marker_for_plan(plan: str):
+    return {
+        "Parallel Bitmap Heap Scan": "P",
+        "Bitmap Heap Scan": "o",
+        "Parallel Seq Scan": "^",
+        "Seq Scan": "s",
+        "Index Scan": "D",
+    }.get(plan, "x")
+
+
+def plot(default_points, compare_points, out_path: Path):
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    for label, points, color in [
+        ("rpc=4", default_points, "#1f77b4"),
+        ("rpc=30", compare_points, "#d62728"),
+    ]:
+        x = [p["half_side"] for p in points]
+        y = [p["exec_ms"] for p in points]
+        ax.plot(x, y, color=color, linewidth=1.8, alpha=0.9, label=label)
+        for p in points:
+            ax.scatter(
+                p["half_side"],
+                p["exec_ms"],
+                color=color,
+                marker=marker_for_plan(p["plan"]),
+                s=75,
+                alpha=0.95,
+            )
+
+    ax.set_title("Spatial ST_Intersects Sweep: Runtime vs Envelope Half-Side")
+    ax.set_xlabel("Envelope half-side (meters)")
+    ax.set_ylabel("Execution Time (ms)")
+    ax.grid(True, linestyle="--", alpha=0.3)
+    line_legend = ax.legend(loc="upper left", title="Series")
+
+    plan_markers = []
+    for plan in sorted({p["plan"] for p in default_points + compare_points}):
+        plan_markers.append(
+            Line2D(
+                [0],
+                [0],
+                marker=marker_for_plan(plan),
+                color="black",
+                linestyle="None",
+                markersize=7,
+                label=plan,
+            )
+        )
+    ax.add_artist(line_legend)
+    ax.legend(handles=plan_markers, loc="upper right", title="Plan Marker")
+
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=160)
+    print(f"Wrote intersects graph: {out_path}")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--default-out", required=True)
+    parser.add_argument("--compare-out", required=True)
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+
+    default_points = parse_results(Path(args.default_out))
+    compare_points = parse_results(Path(args.compare_out))
+
+    if not default_points:
+        raise SystemExit(f"No points parsed from {args.default_out}")
+    if not compare_points:
+        raise SystemExit(f"No points parsed from {args.compare_out}")
+
+    plot(default_points, compare_points, Path(args.output))
+
+
+if __name__ == "__main__":
+    main()

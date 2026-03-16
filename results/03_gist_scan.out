@@ -1,0 +1,38 @@
+Expanded display is used automatically.
+Null display is "¤".
+Line style is unicode.
+Unicode border line style is "single".
+Unicode column line style is "single".
+Unicode header line style is "double".
+SET
+== Representative ST_DWithin plan (force seqscan off) ==
+SET
+SET
+ enable_seqscan 
+════════════════
+ off
+(1 row)
+
+ effective_cache_size 
+══════════════════════
+ 128MB
+(1 row)
+
+                                                               QUERY PLAN                                                               
+════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+ Aggregate  (cost=1012.73..1012.74 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=94 read=13
+   ->  Bitmap Heap Scan on points_1m  (cost=4.90..1012.48 rows=100 width=0) (actual rows=72 loops=1)
+         Filter: st_dwithin(geom, '0101000020110F000000000000000000000000000000000000'::geometry, '400'::double precision)
+         Rows Removed by Filter: 19
+         Heap Blocks: exact=91
+         Buffers: shared hit=94 read=13
+         ->  Bitmap Index Scan on points_1m_geom_gix  (cost=0.00..4.88 rows=62 width=0) (actual rows=91 loops=1)
+               Index Cond: (geom && st_expand('0101000020110F000000000000000000000000000000000000'::geometry, '400'::double precision))
+               Buffers: shared hit=3 read=13
+ Planning:
+   Buffers: shared hit=199
+ Planning Time: 16.192 ms
+ Execution Time: 0.505 ms
+(14 rows)
+

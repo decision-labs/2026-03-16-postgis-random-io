@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>blogpost.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="the-real-cost-of-spatial-random-io-postgis-edition">The Real Cost of Spatial Random I/O (PostGIS Edition)</h1>
+<p>I wanted to replicate the core idea from Tomas Vondra's post on <code>random_page_cost</code>, but for PostGIS workloads.</p>
+<p>The original point is not &quot;index scan is always bad&quot; or &quot;seq scan is always good.&quot; The point is that planner cost crossover and runtime crossover can diverge, and that can produce a suboptimal plan region.</p>
+<p>Reference: <a href="https://vondra.me/posts/the-real-cost-of-random-io/#">The real cost of random I/O</a></p>
+<hr>
+<h2 id="what-i-tested">What I tested</h2>
+<p>Environment:</p>
+<ul>
+<li>PostgreSQL 17 (local)</li>
+<li>PostGIS 3.6.1</li>
+<li>1,000,000 random points in <code>EPSG:3857</code></li>
+<li>GiST index on <code>geom</code></li>
+</ul>
+<p>Dataset extent is synthetic and centered around <code>(0,0)</code>, approximately <code>[-50000, 50000]</code> meters on each axis.</p>
+<p>Machine specs:</p>
+<ul>
+<li>macOS 14.6.1 (Darwin 23.6.0, build 23G93)</li>
+<li>Apple M1 (8 CPU cores)</li>
+<li>16 GB RAM</li>
+<li><code>arm64</code> architecture</li>
+</ul>
+<hr>
+<h2 id="baseline-non-spatial-crossover-check">Baseline non-spatial crossover check</h2>
+<p>Before the spatial runs, I added a forced-plan crossover probe to visualize:</p>
+<ul>
+<li>planner-estimated cost curves (forced index vs forced seq)</li>
+<li>actual runtime curves (forced index vs forced seq)</li>
+<li>planner-chosen runtime</li>
+</ul>
+<p><img src="../2026-03-16-random-io-cost/results/random_io_crossover.png" alt="Non-spatial cost/runtime crossover"></p>
+<p>In this run:</p>
+<ul>
+<li>estimated cost crossover was around <code>~1.55%</code></li>
+<li>measured runtime crossover was around <code>~4.89%</code></li>
+</ul>
+<p>Implication: tuning decisions based only on default planner costs can be misleading. If cost crossover and runtime crossover do not align, there is a selectivity band where the planner may pick a slower path. In practice, this means <code>random_page_cost</code> should be calibrated against measured runtimes on your own workload, not treated as a one-size-fits-all constant.</p>
+<hr>
+<h2 id="spatial-experiment-1-stdwithin">Spatial experiment 1: <code>ST_DWithin</code></h2>
+<p>I swept radius selectivity from very small up to about 25% area-equivalent selectivity, and compared:</p>
+<ul>
+<li>default <code>random_page_cost=4</code></li>
+<li>adjusted <code>random_page_cost=30</code></li>
+</ul>
+<p><img src="results/spatial_random_io_sweep.png" alt="ST_DWithin sweep"></p>
+<h3 id="what-stands-out">What stands out</h3>
+<ul>
+<li>Both lines often use the same plan family (mostly bitmap / parallel bitmap) at medium-high selectivity.</li>
+<li>Runtime still diverges at many points even with the same plan family.</li>
+</ul>
+<p>That happens because &quot;same node type&quot; is not &quot;same actual work&quot;:</p>
+<ul>
+<li>different heap page hit/read mix</li>
+<li>different prefetch/caching behavior between runs</li>
+<li>different filter/recheck cost effects</li>
+<li>parallel worker timing and contention</li>
+</ul>
+<p>So this chart is a good reminder: plan label alone is not enough; you need <code>BUFFERS</code>, execution time, and repeated runs.</p>
+<hr>
+<h2 id="spatial-experiment-2-geom--envelope--stintersects">Spatial experiment 2: <code>geom &amp;&amp; envelope</code> + <code>ST_Intersects</code></h2>
+<p>I added a second sweep using square envelopes, which explicitly combines:</p>
+<ul>
+<li>bbox index filtering (<code>&amp;&amp;</code>)</li>
+<li>exact spatial predicate (<code>ST_Intersects</code>)</li>
+</ul>
+<p><img src="results/spatial_intersects_sweep.png" alt="ST_Intersects sweep"></p>
+<h3 id="why-this-test-matters">Why this test matters</h3>
+<p>This pattern is common in real GIS queries. It highlights that:</p>
+<ul>
+<li>candidate set growth can change quickly with envelope size</li>
+<li>exact predicate checks add CPU work beyond raw I/O</li>
+<li>planner constants can shift choices, but runtime shape still depends heavily on data locality and cache state</li>
+</ul>
+<hr>
+<h2 id="query-area-map">Query area map</h2>
+<p>The map below shows the synthetic extent, sampled points, query center, and selected radii used in the sweep.</p>
+<p><img src="results/spatial_query_map.png" alt="Spatial query area map"></p>
+<hr>
+<h2 id="practical-takeaways">Practical takeaways</h2>
+<ol>
+<li>Treat <code>random_page_cost</code> as a workload calibration knob, not a fixed truth.</li>
+<li>For PostGIS, evaluate both:
+<ul>
+<li>path family changes (index/bitmap/seq/parallel variants)</li>
+<li>runtime changes within the same family.</li>
+</ul>
+</li>
+<li>Always pair <code>EXPLAIN (ANALYZE, BUFFERS)</code> with repeated measurements.</li>
+<li>If you want to claim crossover behavior, plot both cost and runtime curves explicitly.</li>
+</ol>
+<hr>
+<h2 id="repro-commands">Repro commands</h2>
+<p>From <code>2026-03-16-postgis-random-io/</code>:</p>
+<ul>
+<li><code>make init</code></li>
+<li><code>make build</code></li>
+<li><code>make sweep</code></li>
+<li><code>make compare RPC=30</code></li>
+<li><code>make graph</code></li>
+<li><code>make isweep</code></li>
+<li><code>make icompare RPC=30</code></li>
+<li><code>make igraph</code></li>
+<li><code>make map</code></li>
+</ul>
+<p>From <code>2026-03-16-random-io-cost/</code>:</p>
+<ul>
+<li><code>make crossover</code></li>
+<li><code>make graph-crossover</code></li>
+</ul>
+
+</body>
+</html>

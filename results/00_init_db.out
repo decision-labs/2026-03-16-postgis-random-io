@@ -1,0 +1,26 @@
+Expanded display is used automatically.
+Null display is "¤".
+Line style is unicode.
+Unicode border line style is "single".
+Unicode column line style is "single".
+Unicode header line style is "double".
+SET
+== Create database if missing ==
+CREATE DATABASE
+== Connect, enable PostGIS, and show baseline settings ==
+You are now connected to database "spatial_rpc_lab" as user "shoaib".
+CREATE EXTENSION
+                                                                                                                                                                                   postgis_full_version                                                                                                                                                                                   
+══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+ POSTGIS="3.6.1 0" [EXTENSION] PGSQL="170" GEOS="3.14.1-CAPI-1.20.5" PROJ="9.7.1 NETWORK_ENABLED=OFF URL_ENDPOINT=https://cdn.proj.org USER_WRITABLE_DIRECTORY=/Users/shoaib/Library/Application Support/proj DATABASE_PATH=/opt/homebrew/Cellar/proj/9.7.1/share/proj/proj.db" (compiled against PROJ 9.7.0) LIBXML="2.15.1" LIBJSON="0.18" LIBPROTOBUF="1.5.2" WAGYU="0.5.0 (Internal)"
+(1 row)
+
+           name           │ setting │ unit 
+══════════════════════════╪═════════╪══════
+ effective_cache_size     │ 524288  │ 8kB
+ effective_io_concurrency │ 0       │ ¤
+ random_page_cost         │ 4       │ ¤
+ seq_page_cost            │ 1       │ ¤
+ shared_buffers           │ 16384   │ 8kB
+(5 rows)
+

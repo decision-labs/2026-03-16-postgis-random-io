@@ -1,0 +1,20 @@
+Expanded display is used automatically.
+Null display is "¤".
+Line style is unicode.
+Unicode border line style is "single".
+Unicode column line style is "single".
+Unicode header line style is "double".
+SET
+== Sequential scan baseline ==
+RESET
+RESET
+                                            QUERY PLAN                                            
+══════════════════════════════════════════════════════════════════════════════════════════════════
+ Seq Scan on points_1m  (cost=0.00..18334.00 rows=1000000 width=40) (actual rows=1000000 loops=1)
+   Buffers: shared hit=8334
+ Planning:
+   Buffers: shared hit=108
+ Planning Time: 1.596 ms
+ Execution Time: 79.484 ms
+(6 rows)
+
